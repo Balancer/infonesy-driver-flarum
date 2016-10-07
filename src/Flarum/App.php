@@ -1,6 +1,6 @@
 <?php
 
-namespace Infonesy\Driver\Flarum;
+namespace Infonesy\Drivers\Flarum;
 
 class FlarumServerAdapter extends \Flarum\Forum\Server
 {
@@ -21,7 +21,6 @@ class App
 		static $instance;
 		if(empty($instance))
 		{
-			require FLARUM_DIR.'/vendor/autoload.php';
 			$app = new App;
 			$app->flarum_server = new FlarumServerAdapter(FLARUM_DIR);
 			$app->flarum_app = $app->flarum_server->getFlarumApp();

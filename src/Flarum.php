@@ -1,6 +1,6 @@
 <?php
 
-namespace Infonesy\Driver;
+namespace Infonesy\Drivers;
 
 class Flarum
 {

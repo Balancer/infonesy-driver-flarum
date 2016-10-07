@@ -1,8 +1,6 @@
 <?php
 
-namespace Infonesy\Driver\Flarum;
-
-require FLARUM_DIR.'/vendor/autoload.php';
+namespace Infonesy\Drivers\Flarum;
 
 class Post extends \B2\Obj
 {
@@ -29,7 +27,7 @@ class Post extends \B2\Obj
 			$flarum_app->events,
 			new	\Flarum\Core\Repository\DiscussionRepository,
 			new	\Flarum\Core\Notification\NotificationSyncer(new \Flarum\Core\Repository\NotificationRepository, new \Flarum\Core\Notification\NotificationMailer($flarum_app->mailer)),
-			new \Flarum\Core\Validator\PostValidator($flarum_app->validator, $flarum_app->events, $flarum_app->make('Symfony\Component\Translation\TranslatorInterface'))
+			new \Flarum\Core\Validator\PostValidator($flarum_app->validator, $flarum_app->events, $flarum_app->make(\Symfony\Component\Translation\TranslatorInterface::class))
 		);
 
 		$flarum_post = $handler->handle($cmd);
