@@ -1,6 +1,6 @@
 <?php
 
-namespace Infonesy\Drivers\Flarum\B2Models;
+namespace Infonesy\Driver\Flarum\B2Model;
 
 class ObjectDb extends \bors_object_db
 {

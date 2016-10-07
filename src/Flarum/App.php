@@ -1,6 +1,6 @@
 <?php
 
-namespace Infonesy\Drivers\Flarum;
+namespace Infonesy\Driver\Flarum;
 
 class FlarumServerAdapter extends \Flarum\Forum\Server
 {
