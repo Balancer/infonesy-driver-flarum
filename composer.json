@@ -1,0 +1,21 @@
+{
+	"name": "balancer/infonesy-driver-flarum",
+	"description": "Infonesy Flarum forum engine driver",
+	"authors": [
+		{
+			"name": "Roman =Balancer= Karshiev",
+			"email": "balancer@balancer.ru"
+		}
+	],
+
+	"require": {
+		"balancer/bors-core": "*",
+		"robmorgan/phinx": "*"
+	},
+
+	"autoload": {
+		"psr-4": {
+			"Infonesy\\": "src/"
+		}
+	}
+}
