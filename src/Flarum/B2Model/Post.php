@@ -2,7 +2,7 @@
 
 namespace Infonesy\Driver\Flarum\B2Model;
 
-class Post extends ObjectDB
+class Post extends ObjectDb
 {
 	function table_name() { return 'flarum_posts'; }
 

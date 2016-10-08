@@ -1,5 +1,8 @@
 #!/bin/bash
 
-cd ../../../
-echo php vendor/bin/phinx migrate -c `dirname $0`/phinx.yml
+# Go to composer root
+cd "$(dirname "$0")/../../../"
 
+mkdir -p data
+
+php vendor/bin/phinx migrate -c "$(dirname "$0")/phinx.yml"

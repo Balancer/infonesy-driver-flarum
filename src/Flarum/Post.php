@@ -4,7 +4,40 @@ namespace Infonesy\Driver\Flarum;
 
 class Post extends \B2\Obj
 {
-	var $flarum_post;
+	static function find_or_create($data)
+	{
+		$infonesy_post = Adapter\Post::find(['infonesy_uuid' => $data['UUID']])->first();
+
+		// If post found in adapter database
+		if($infonesy_post->is_not_null())
+			return self::loader($infonesy_post, NULL, $data);
+
+		$author = User::find_or_create($data['Author']);
+
+		// Make flarum post
+		$flarum_post = self::create([
+			'topic_id'		=> config('flarum.quarantine.topic_id'),
+			'author_id'		=> $author->id(),
+			'text'			=> $data['Text'],
+			'create_time'	=> strtotime($data['Date']),
+		]);
+
+		// Make adapter link
+		$infonesy_post = Adapter\Post::create([
+			'flarum_post_id' => $flarum_post->id(),
+			'infonesy_uuid' => $data['UUID'],
+		]);
+
+		return self::loader($infonesy_post, $flarum_post, $data);
+	}
+
+	static function loader($infonesy_post, $flarum_post, $data)
+	{
+		if(!$flarum_post)
+			$flarum_post = B2Model\Post::load($infonesy_post->flarum_post_id());
+
+		return $flarum_post;
+	}
 
 	static function create($data)
 	{
@@ -16,7 +49,8 @@ class Post extends \B2\Obj
 		$flarum_data = [
 			'attributes' => [
 				'content' => $data['text'],
-				'time' => \Carbon\Carbon::now('utc')->toDateTimeString(),
+				'time' => \Carbon\Carbon::createFromTimestamp($data['create_time'])->toDateTimeString(),
+				'is_approved' => true,
 			],
 		];
 
@@ -30,12 +64,9 @@ class Post extends \B2\Obj
 			new \Flarum\Core\Validator\PostValidator($flarum_app->validator, $flarum_app->events, $flarum_app->make(\Symfony\Component\Translation\TranslatorInterface::class))
 		);
 
-		$flarum_post = $handler->handle($cmd);
+		$flarum_original_post = $handler->handle($cmd);
 
-		$post = new Post(NULL);
-		$post->flarum_post = $flarum_post;
-		return $post;
+		$flarum_b2_post = B2Model\Post::load($flarum_original_post->id);
+		return $flarum_b2_post;
 	}
-
-	function id() { return $this->flarum_post->id; }
 }
