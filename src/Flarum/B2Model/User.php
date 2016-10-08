@@ -4,7 +4,7 @@ namespace Infonesy\Driver\Flarum\B2Model;
 
 class User extends ObjectDb
 {
-	function table_name() { return 'flarum_users'; }
+	function table_name() { return config('flarum.db.prefix').'users'; }
 
 	function table_fields()
 	{

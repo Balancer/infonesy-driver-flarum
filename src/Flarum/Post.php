@@ -13,10 +13,15 @@ class Post extends \B2\Obj
 			return self::loader($infonesy_post, NULL, $data);
 
 		$author = User::find_or_create($data['Author']);
+		$topic = Topic::find_or_create(['UUID' => $data['TopicUUID']]);
+
+		$data['flarum_b2_topic'] = $topic;
+
+		echo "tid={$topic->id()}, uid={$author->id()}, date={$data['Date']}\n";
 
 		// Make flarum post
 		$flarum_post = self::create([
-			'topic_id'		=> config('flarum.quarantine.topic_id'),
+			'topic_id'		=> $topic->id(),
 			'author_id'		=> $author->id(),
 			'text'			=> $data['Text'],
 			'create_time'	=> strtotime($data['Date']),
@@ -31,25 +36,51 @@ class Post extends \B2\Obj
 		return self::loader($infonesy_post, $flarum_post, $data);
 	}
 
-	static function loader($infonesy_post, $flarum_post, $data)
+	static function loader($infonesy_post, $b2_post, $data)
 	{
-		if(!$flarum_post)
-			$flarum_post = B2Model\Post::load($infonesy_post->flarum_post_id());
+		if(!$b2_post)
+			$b2_post = B2Model\Post::load($infonesy_post->flarum_post_id());
 
-		return $flarum_post;
+		if(empty($data['flarum_b2_topic']))
+			$topic = Topic::find_or_create(['UUID' => $data['TopicUUID']]);
+		else
+			$topic = $data['flarum_b2_topic'];
+
+		if((!$b2_post->topic_id() || $b2_post->topic_id() == config('flarum.quarantine.topic_id')) && !empty($data['TopicUUID']))
+			$b2_post->set_topic_id($topic->id());
+
+		if(!empty($data['Date']))
+		{
+			$ts = strtotime($data['Date']);
+//			$time = \Carbon\Carbon::createFromTimestampUTC($ts)->toDateTimeString();
+//			echo "; ts=".date("r", $ts)."; dt=".(new \DateTime($time))."; ";
+//			$b2_post->set_create_datetime(new \DateTime($time));
+//			$b2_post->set_create_time($ts);
+			// Forced UTC time for Flarum ugliness o_O
+			$b2_post->set_create_datetime(gmdate('Y-m-d H:i:s', $ts));
+		}
+
+		$b2_post->save();
+
+		$topic->recalculate();
+
+		return $b2_post;
 	}
 
 	static function create($data)
 	{
 		$app = App::instance();
 		$flarum_app = $app->flarum_app;
+//		$flarum_actor = Sub\User::find(popval($data, 'author_id'));
 		$flarum_actor = \Flarum\Core\User::find(popval($data, 'author_id'));
 		$flarum_discussion = \Flarum\Core\Discussion::find(popval($data, 'topic_id'));
+
+//		$flarum_actor->forced_time = true;
 
 		$flarum_data = [
 			'attributes' => [
 				'content' => $data['text'],
-				'time' => \Carbon\Carbon::createFromTimestamp($data['create_time'])->toDateTimeString(),
+//				'time' => \Carbon\Carbon::createFromTimestampUTC($data['create_time'])->toDateTimeString(),
 				'is_approved' => true,
 			],
 		];

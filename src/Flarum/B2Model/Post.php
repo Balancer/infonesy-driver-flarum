@@ -4,7 +4,7 @@ namespace Infonesy\Driver\Flarum\B2Model;
 
 class Post extends ObjectDb
 {
-	function table_name() { return 'flarum_posts'; }
+	function table_name() { return config('flarum.db.prefix').'posts'; }
 
 	function table_fields()
 	{
@@ -12,7 +12,8 @@ class Post extends ObjectDb
 			'id',
 			'topic_id' => 'discussion_id',
 			'number',
-			'create_time' => 'time',
+//			'create_time' => ['name' => 'UNIX_TIMESTAMP(time)'],
+			'create_datetime' => 'time',
 			'owner_id' => 'user_id',
 			'type',
 			'content' => ['type' => 'markdown'],
