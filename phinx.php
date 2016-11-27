@@ -14,8 +14,8 @@ return [
 	'environments' => [
 		'default_database' => 'main',
 		'main' => [
-			'name' => \B2\Cfg::get('infonesy.map_db'),
-			'connection' => driver_mysql::factory(\B2\Cfg::get('infonesy.map_db'))->connection(),
+			'name' => \B2\Cfg::get('flarum_db'),
+			'connection' => driver_mysql::factory(\B2\Cfg::get('flarum_db'))->connection(),
 		]
 	]
 ];
