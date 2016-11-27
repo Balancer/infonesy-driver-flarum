@@ -14,7 +14,7 @@ class Post extends ObjectDb
 			'number',
 //			'create_time' => ['name' => 'UNIX_TIMESTAMP(time)'],
 			'create_datetime' => 'time',
-			'owner_id' => 'user_id',
+			'author_id' => 'user_id',
 			'type',
 			'content' => ['type' => 'markdown'],
 			'modify_time' => 'edit_time',

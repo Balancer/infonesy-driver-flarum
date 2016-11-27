@@ -22,7 +22,7 @@ class App
 		if(empty($instance))
 		{
 			$app = new App;
-			$app->flarum_server = new FlarumServerAdapter(FLARUM_DIR);
+			$app->flarum_server = new FlarumServerAdapter(\B2\Cfg::get('flarum.root'));
 			$app->flarum_app = $app->flarum_server->getFlarumApp();
 			$instance = $app;
 		}
